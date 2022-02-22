@@ -1,7 +1,7 @@
-const { Character } = require("../models");
+const { Weapon } = require("../models");
 
 /**
- * Query for Characters
+ * Query for Weapon
  * @param {Object} filter - Mongo filter
  * @param {Object} options - Query options
  * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc)
@@ -9,21 +9,21 @@ const { Character } = require("../models");
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<QueryResult>}
  */
-const queryCharacters = async (filter, options) => {
-  const characters = await Character.paginate(filter, options);
-  return characters;
+const queryWeapons = async (filter, options) => {
+  const weapons = await Weapon.paginate(filter, options);
+  return weapons;
 };
 
 /**
  * Get user by name
  * @param {String} name
- * @returns {Promise<Character>}
+ * @returns {Promise<Weapon>}
  */
-const getCharacterByName = async (name) => {
-  return Character.findOne({ ...{ name } });
+const getWeaponByName = async (name) => {
+  return Weapon.findOne({ ...{ name } });
 };
 
 module.exports = {
-  queryCharacters,
-  getCharacterByName,
+  queryWeapons,
+  getWeaponByName,
 };

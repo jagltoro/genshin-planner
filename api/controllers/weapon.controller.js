@@ -3,42 +3,40 @@ const pick = require("../utils/pick");
 const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
 const {
-  characterService,
+  weaponService,
   materialService,
   translationService,
 } = require("../services");
 
-const getCharacters = catchAsync(async (req, res) => {
+const getWeapons = catchAsync(async (req, res) => {
   const filter = pick(req.query, ["name", "role"]);
   const options = pick(req.query, ["sortBy", "limit", "page"]);
-  const result = await characterService.queryCharacters(filter, options);
+  const result = await weaponService.queryWeapons(filter, options);
 
-  const characters = [];
+  const weapons = [];
 
-  for (let character of result.results) {
+  for (let weapon of result.results) {
     let translation = await translationService.getTranslationByName(
-      character.name
+      weapon.name
     );
-    characters.push({
-      ...character._doc,
-      name: translation.translation,
+    weapons.push({
+      translation: translation.translation,
+      ...weapon._doc,
     });
   }
-  characters.sort((a, b) => a.name.localeCompare(b.name));
-  result.results = characters;
+  weapons.sort((a, b) => a.translation.localeCompare(b.translation)); // Change model to support weapon name
+  result.results = weapons;
 
   res.send(result);
 });
 
-const getCharacter = catchAsync(async (req, res) => {
-  const character = await characterService.getCharacterByName(
-    req.params.characterName
-  );
-  if (!character) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Character not found");
+const getWeapon = catchAsync(async (req, res) => {
+  const weapon = await weaponService.getWeaponByName(req.params.weaponName);
+  if (!weapon) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Weapon not found");
   }
 
-  const materials = await materialService.getMaterialByName(character.mats);
+  const materials = await materialService.getMaterialByName(weapon.mats);
   for (let material of materials) {
     let materialSource = [];
     const translation = await translationService.getTranslationByName(
@@ -57,11 +55,12 @@ const getCharacter = catchAsync(async (req, res) => {
     material.source = materialSource;
   }
 
-  character.mats = materials;
-  res.send(character);
+  weapon.mats = materials;
+
+  res.send(weapon);
 });
 
 module.exports = {
-  getCharacters,
-  getCharacter,
+  getWeapons,
+  getWeapon,
 };

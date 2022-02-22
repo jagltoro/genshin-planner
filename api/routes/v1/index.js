@@ -1,5 +1,6 @@
 const express = require("express");
 const characterRoute = require("./character.route");
+const weaponRoute = require("./weapon.route");
 // const docsRoute = require('./docs.route');
 const config = require("../../config/config");
 
@@ -9,6 +10,10 @@ const defaultRoutes = [
   {
     path: "/characters",
     route: characterRoute,
+  },
+  {
+    path: "/weapons",
+    route: weaponRoute,
   },
 ];
 
